@@ -5,6 +5,7 @@
 !/config/
 !/external/
 !/nginx.conf
+!/default.conf
 !/src/
 !/templates/
 !/vendor/

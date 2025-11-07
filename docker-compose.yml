@@ -1,19 +1,8 @@
-services:
-  xhgui:
-    # https://hub.docker.com/r/xhgui/xhgui/tags
-    image: xhgui/xhgui:latest
-    restart: always
-    volumes:
-      - ./config:/var/www/xhgui/config
-    environment:
-      - XHGUI_MONGO_HOSTNAME=mongo
-      - XHGUI_MONGO_DATABASE=xhprof
-    ports:
-      - "8142:80"
+version: '3.9'
 
+services:
   mongo:
     image: percona/percona-server-mongodb:4.4
-    # (case sensitive) engine: mmapv1, rocksdb, wiredTiger, inMemory
     command: --storageEngine=wiredTiger
     restart: always
     environment:
@@ -23,8 +12,27 @@ services:
       - mongodb:/data/db
     ports:
       - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.stats()"]
+      interval: 5s
+      retries: 10
+      start_period: 5s
+
+  xhgui:
+    build: .
+    image: xhgui:latest
+    restart: always
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./config:/var/www/xhgui/config
+    environment:
+      - XHGUI_MONGO_HOSTNAME=mongo
+      - XHGUI_MONGO_DATABASE=xhprof
+    ports:
+      - "8142:80"
 
 volumes:
   mongodb:
 
-# vim:ts=2:sw=2:et
