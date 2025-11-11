@@ -27,6 +27,7 @@ services:
         condition: service_healthy
     volumes:
       - ./config:/var/www/xhgui/config
+      - ./profiles:/profiles
     environment:
       - XHGUI_MONGO_HOSTNAME=mongo
       - XHGUI_MONGO_DATABASE=xhprof
