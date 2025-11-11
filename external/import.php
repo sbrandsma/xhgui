@@ -23,15 +23,9 @@ if (!$fp) {
 $app = new Application();
 $saver = $app->getSaver();
 
-while (!feof($fp)) {
-    $line = fgets($fp);
-    $data = json_decode($line, true);
-    if ($data) {
-        try {
-            $saver->save($data);
-        } catch (Throwable $e) {
-            error_log($e);
-        }
-    }
+$contents = file_get_contents($file);
+$data = json_decode($contents, true);
+if ($data) {
+    $saver->save($data);
 }
-fclose($fp);
+
